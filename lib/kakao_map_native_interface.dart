@@ -1,6 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'native_button_plugin_method_channel.dart';
+import 'kakao_map_native_channel.dart';
 
 abstract class NativeButtonPluginPlatform extends PlatformInterface {
   /// Constructs a NativeButtonPluginPlatform.
