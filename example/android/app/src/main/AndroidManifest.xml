@@ -1,8 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="kakao_map_native_example"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:label,android:icon">
+<!--        Insert your Kakao Native Key-->
+        <meta-data
+            android:name="com.kakao.vectormap.KAKAO_MAP_KEY"
+            android:value="${com.kakao.vectormap.KAKAO_MAP_KEY}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

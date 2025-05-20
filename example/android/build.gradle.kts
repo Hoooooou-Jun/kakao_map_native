@@ -2,6 +2,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // You have to inject like this to use Kakao Map SDK
+        maven {
+            url = uri("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/")
+        }
     }
 }
 

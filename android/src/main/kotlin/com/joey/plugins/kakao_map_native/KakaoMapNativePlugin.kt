@@ -1,33 +1,33 @@
 package com.joey.plugins.kakao_map_native
 
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
+import com.kakao.vectormap.KakaoMapSdk
 
-/** KakaoMapNativePlugin */
-class KakaoMapNativePlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
 
-  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "kakao_map_native")
-    channel.setMethodCallHandler(this)
+class KakaoMapNativePlugin: FlutterPlugin {
+  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    val context = binding.applicationContext
+
+    val appInfo = context.packageManager
+      .getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+    val metadata = appInfo.metaData
+    val appKey = metadata.getString("com.kakao.vectormap.KAKAO_MAP_KEY")
+      ?: error("Doesn't initialize (com.kakao.vectormap.KAKAO_MAP_KEY) at AndroidManifest.")
+    Log.d("KakaoMap", "Read AppKey → $appKey")
+
+    /* Initialize Kakao Map SDK */
+    KakaoMapSdk.init(context, appKey)
+    Log.d("KakaoMap", "Success to init KakaoMapSdk")
+
+    binding.platformViewRegistry
+      .registerViewFactory(
+        "kakao_map", KakaoMapFactory(binding.binaryMessenger, binding.applicationContext)
+      )
   }
 
-  override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
-    }
-  }
-
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {}
 }
+
