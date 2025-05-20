@@ -1,7 +1,7 @@
 name: kakao_map_native
-description: "A new Flutter plugin project."
+description: "Kakao map native plugin for Flutter"
 version: 0.0.1
-homepage:
+homepage: https://github.com/Hoooooou-Jun/kakao_map_native
 
 environment:
   sdk: ^3.7.2
