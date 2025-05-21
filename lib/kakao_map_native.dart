@@ -9,16 +9,24 @@ class KakaoMapView extends StatelessWidget {
   final double width;
   final double height;
 
-  const KakaoMapView({
-    Key? key,
-    required this.width,
-    required this.height,
-  }) : super(key: key);
+  const KakaoMapView({Key? key, required this.width, required this.height})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform != TargetPlatform.android) {
-      return const Text('Unsupported platform');
+      return SizedBox(
+        width: width,
+        height: height,
+        child: UiKitView(
+          viewType: 'kakao_map',
+          creationParams: {
+            'width': width,
+            'height': height,
+          },
+          creationParamsCodec: const StandardMessageCodec(),
+        ),
+      );
     }
     return SizedBox(
       width: width,
