@@ -1,41 +1,29 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:kakao_map_native/kakao_map_native_view.dart';
 
-typedef NativeButtonCallback = void Function();
+typedef MapType = String;     // "map" | "skyview"
+typedef OverlayType = String; // "hill_shading" | "bicycle_road" | "hybrid"
 
-class KakaoMapView extends StatelessWidget {
-  final double width;
-  final double height;
-
-  const KakaoMapView({Key? key, required this.width, required this.height})
-    : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (defaultTargetPlatform != TargetPlatform.android) {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: UiKitView(
-          viewType: 'kakao_map',
-          creationParams: {
-            'width': width,
-            'height': height,
-          },
-          creationParamsCodec: const StandardMessageCodec(),
-        ),
-      );
-    }
-    return SizedBox(
+class KakaoMapNative {
+  static Widget buildView({
+    required double width,
+    required double height,
+    double latitude = 37.402001,
+    double longitude = 127.108678,
+    int zoomLevel = 7,
+    MapType mapType = "map",
+    OverlayType? overlay,
+    Key? key,
+  }) {
+    return KakaoMapNativeView(
+      key: key,
       width: width,
       height: height,
-      child: AndroidView(
-        viewType: 'kakao_map',
-        creationParams: <String, dynamic>{},
-        creationParamsCodec: const StandardMessageCodec(),
-      ),
+      latitude: latitude,
+      longitude: longitude,
+      zoomLevel: zoomLevel,
+      mapType: mapType,
+      overlay: overlay,
     );
   }
 }

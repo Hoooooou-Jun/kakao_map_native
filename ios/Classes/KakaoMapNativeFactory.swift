@@ -9,11 +9,9 @@ public class KakaoMapNativeFactory: NSObject, FlutterPlatformViewFactory {
     super.init()
   }
   
-  // dict 를 읽을 수 있도록 override
   public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
     return FlutterStandardMessageCodec.sharedInstance()
   }
-  
   
   public func create(
     withFrame frame: CGRect,
@@ -21,11 +19,21 @@ public class KakaoMapNativeFactory: NSObject, FlutterPlatformViewFactory {
     arguments args: Any?
   ) -> FlutterPlatformView {
     let params = args as? [String: Any]
-    return KakaoMapNativeView(
+    let mapView = KakaoMapNativeView(
       frame: frame,
       viewId: viewId,
       args: params,
       messenger: messenger
     )
+    
+    let channelName = "kakao_map_view_\(viewId)"
+    let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      mapView.handleMethodCall(call, result: result)
+    }
+    
+    KakaoMapNativePlugin.mapStates[viewId] = (view: mapView, channel: channel)
+
+    return mapView
   }
 }
