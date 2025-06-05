@@ -1,2 +1,2 @@
-## 0.0.1
-* Initail version. Creation Kakao map on Andriod, iOS
+## 0.0.2
+* Implement map overlay, changing map type, moving camera.
