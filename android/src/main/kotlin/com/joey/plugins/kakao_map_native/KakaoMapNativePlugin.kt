@@ -24,7 +24,7 @@ class KakaoMapNativePlugin: FlutterPlugin {
 
     binding.platformViewRegistry
       .registerViewFactory(
-        "kakao_map", KakaoMapFactory(binding.binaryMessenger, binding.applicationContext)
+        "kakao_map", KakaoMapNativeFactory(binding.binaryMessenger, binding.applicationContext)
       )
   }
 

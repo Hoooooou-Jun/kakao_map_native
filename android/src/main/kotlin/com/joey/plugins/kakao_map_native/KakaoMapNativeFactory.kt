@@ -11,7 +11,7 @@ import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 import io.flutter.plugin.common.StandardMessageCodec
 
-class KakaoMapFactory(
+class KakaoMapNativeFactory(
     private val messenger: BinaryMessenger,
     private val context: Context
 ) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
