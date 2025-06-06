@@ -33,9 +33,7 @@ class KakaoMapNativeView(
 
         mapView.start(
             object : MapLifeCycleCallback() {
-                override fun onMapDestroy() {
-                    // mapView가 destroy될 때 호출됨
-                }
+                override fun onMapDestroy() {}
 
                 override fun onMapError(error: Exception?) {
                     Log.e("KakaoMap", "MapError: $error")
@@ -54,7 +52,6 @@ class KakaoMapNativeView(
     private fun applyInitialSettings() {
         val map = kakaoMap ?: return
 
-        // 1) 초기 카메라 위치 이동 (latitude, longitude, zoomLevel)
         if (initialLatitude != null && initialLongitude != null && initialZoomLevel != null) {
             map.moveCamera(
                 CameraUpdateFactory.newCenterPosition(
@@ -64,7 +61,6 @@ class KakaoMapNativeView(
             )
         }
 
-        // 2) 초기 mapType 세팅 (“map” 또는 “skyview”)
         initialMapType?.let { typeStr ->
             when (typeStr) {
                 "map" -> {
@@ -73,19 +69,16 @@ class KakaoMapNativeView(
                 "skyview" -> {
                     map.changeMapViewInfo(MapViewInfo.from("openmap", MapType.SKYVIEW))
                 }
-                else -> {
-                    // 필요하다면 커스텀 문자열 매핑
-                }
+                else -> {}
             }
         }
 
-        // 3) 초기 overlay 세팅 (“hill_shading”, “bicycle_road”, “hybrid” 등)
         initialOverlay?.let { overlayStr ->
             when (overlayStr) {
                 "hill_shading" -> map.showOverlay(MapOverlay.HILLSHADING)
                 "bicycle_road" -> map.showOverlay(MapOverlay.BICYCLE_ROAD)
                 "hybrid" -> map.showOverlay(MapOverlay.SKYVIEW_HYBRID)
-                else -> { /* 추가 매핑이 필요하면 이곳에 */ }
+                else -> {}
             }
         }
     }
@@ -112,8 +105,6 @@ class KakaoMapNativeView(
                     result.error("NOT_READY", "Map is not ready", null)
                     return
                 }
-
-                // Flutter에서 넘겨준 위도/경도 (필수)
                 val newLat = call.argument<Double>("latitude") ?: 0.0
                 val newLng = call.argument<Double>("longitude") ?: 0.0
 
@@ -123,7 +114,6 @@ class KakaoMapNativeView(
                 val newRotation = call.argument<Number>("rotation")?.toFloat() ?: 0f
                 val newTilt     = call.argument<Number>("tilt")?.toFloat() ?: 0f
 
-
                 map.moveCamera(
                     CameraUpdateFactory.newCenterPosition(
                         LatLng.from(newLat, newLng),
@@ -132,7 +122,7 @@ class KakaoMapNativeView(
                 )
 
                 map.moveCamera(
-                    CameraUpdateFactory.tiltTo(Math.toRadians(newRotation.toDouble()))
+                    CameraUpdateFactory.tiltTo(Math.toRadians(newTilt.toDouble()))
                 )
 
                 map.moveCamera(
@@ -142,42 +132,75 @@ class KakaoMapNativeView(
                 result.success(null)
             }
             "setMapType" -> {
-                result.notImplemented()
+                val newMapType = call.argument<String>("mapType") ?: ""
+                if (map == null) {
+                    result.error("NOT_READY", "Map is not initialized", null)
+                    return
+                }
+                val mapInstance = kakaoMap
+                when (newMapType) {
+                    "map" -> {
+                        map.changeMapType(MapType.NORMAL)
+                    }
+                    "skyview" -> {
+                        map.changeMapType(MapType.SKYVIEW)
+                    }
+                    else -> {
+                        result.error("INVALID_TYPE", "Unsupported mapType: $newMapType", null)
+                        return
+                    }
+                }
+                result.success(null)
             }
             "showOverlay" -> {
-                result.notImplemented()
+                val overlayName = call.argument<String>("overlay") ?: ""
+                if (map == null) {
+                    result.error("NOT_READY", "Map is not initialized", null)
+                    return
+                }
+                when (overlayName) {
+                    "hill_shading" -> {
+                        map.showOverlay(MapOverlay.HILLSHADING)
+                    }
+                    "bicycle_road" -> {
+                        map.showOverlay(MapOverlay.BICYCLE_ROAD)
+                    }
+                    "hybrid" -> {
+                        map.showOverlay(MapOverlay.SKYVIEW_HYBRID)
+                    }
+                    "roadview_line" -> {
+                        map.showOverlay(MapOverlay.ROADVIEW_LINE)
+                    }
+                }
+            }
+            "hideOverlay" -> {
+                val overlayName = call.argument<String>("overlay") ?: ""
+                if (map == null) {
+                    result.error("NOT_READY", "Map is not initialized", null)
+                    return
+                }
+                when (overlayName) {
+                    "hill_shading" -> {
+                        map.hideOverlay(MapOverlay.HILLSHADING)
+                    }
+                    "bicycle_road" -> {
+                        map.hideOverlay(MapOverlay.BICYCLE_ROAD)
+                    }
+                    "hybrid" -> {
+                        map.hideOverlay(MapOverlay.SKYVIEW_HYBRID)
+                    }
+                    "roadview_line" -> {
+                        map.hideOverlay(MapOverlay.ROADVIEW_LINE)
+                    }
+                    else -> {
+                        result.error("INVALID_OVERLAY", "Unsupported overlay: $overlayName", null)
+                        return
+                    }
+                }
             }
             else -> {
                 result.notImplemented()
             }
         }
     }
-
 }
-
-
-//        val mapView = MapView(this.context)
-//
-//        Log.d("KakaoMap", "Instant creation complete $mapView")
-//
-//        mapView.start(object : MapLifeCycleCallback() {
-//            override fun onMapDestroy() {
-//                /* 해제 시 처리(optional) */
-//            }
-//            override fun onMapError(error: Exception?) {
-//                /* 에러 처리 */
-//                Log.d("KakaoMap", "$error")
-//            }
-//        }, object : KakaoMapReadyCallback() {
-//            override fun onMapReady(kakaoMap: com.kakao.vectormap.KakaoMap) {
-//                Log.d("KakaoMap", "Ready to use KakaoMap")
-//            }
-//        })
-//
-//        return object: PlatformView {
-//            override fun getView(): View = mapView
-//            override fun dispose() {
-////                mapView.onPause()
-////                mapView.onDestroy()
-//            }
-//        }

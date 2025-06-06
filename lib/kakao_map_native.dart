@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:kakao_map_native/kakao_map_native_view.dart';
 
 typedef MapType = String;     // "map" | "skyview"
-typedef OverlayType = String; // "hill_shading" | "bicycle_road" | "hybrid"
+typedef OverlayType = String; // "hill_shading" | "bicycle_road" | "hybrid" | "roadview_line"(only Android)
 
 class KakaoMapNative {
   static Widget buildView({
