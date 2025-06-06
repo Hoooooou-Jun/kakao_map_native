@@ -1,2 +1,2 @@
-## 0.0.2
-* Implement map overlay, changing map type, moving camera.
+## 0.0.3
+* Implement map overlay, changing map type, moving camera on both OS.
