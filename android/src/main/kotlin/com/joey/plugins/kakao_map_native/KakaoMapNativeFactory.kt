@@ -16,30 +16,8 @@ class KakaoMapNativeFactory(
     private val context: Context
 ) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        val mapView = MapView(this.context)
-
-        Log.d("KakaoMap", "Instant creation complete $mapView")
-
-        mapView.start(object : MapLifeCycleCallback() {
-            override fun onMapDestroy() {
-                /* 해제 시 처리(optional) */
-            }
-            override fun onMapError(error: Exception?) {
-                /* 에러 처리 */
-                Log.d("KakaoMap", "$error")
-            }
-        }, object : KakaoMapReadyCallback() {
-            override fun onMapReady(kakaoMap: com.kakao.vectormap.KakaoMap) {
-                Log.d("KakaoMap", "Ready to use KakaoMap")
-            }
-        })
-
-        return object: PlatformView {
-            override fun getView(): View = mapView
-            override fun dispose() {
-//                mapView.onPause()
-//                mapView.onDestroy()
-            }
-        }
+        @Suppress("UNCHECKED_CAST")
+        val params = args as? Map<String, Any?>
+        return KakaoMapNativeView(messenger, context, viewId, params as Map<String, Any>)
     }
 }
