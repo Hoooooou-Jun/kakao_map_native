@@ -88,7 +88,7 @@ class KakaoMapNativeView(
     }
 
     override fun dispose() {
-        TODO("Not yet implemented")
+        mapView.finish()
     }
 
     override fun onMethodCall(
