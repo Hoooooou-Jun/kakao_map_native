@@ -1,2 +1,2 @@
-## 0.0.31
-* Implement dispose() method, update dependencies on Android
+## 0.0.32
+* Change SDK version
